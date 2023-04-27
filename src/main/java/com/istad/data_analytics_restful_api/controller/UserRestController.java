@@ -2,6 +2,7 @@ package com.istad.data_analytics_restful_api.controller;
 
 import com.istad.data_analytics_restful_api.model.User;
 import com.istad.data_analytics_restful_api.model.UserAccount;
+import com.istad.data_analytics_restful_api.model.response.AccountResponse;
 import com.istad.data_analytics_restful_api.service.UserService;
 import com.istad.data_analytics_restful_api.utils.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,13 +19,6 @@ public class UserRestController {
         this.userService = userService;
     }
 
-    private boolean isUserValid(int id) {
-        User user = userService.findUserByID(id);
-        return user != null;
-    }
-    private Response<User> userNotFound(int id){
-        return Response.<User>notFound().setMessage("Id cannot defined : "+id).setSuccess(false).setStatus(Response.Status.NOT_FOUND);
-    }
 
     @GetMapping("/allUsers")
     public List<User> getAllUser(){
@@ -61,33 +55,32 @@ public class UserRestController {
         }
     }
 
-    @PutMapping("/update/{id}")
-    public Response<User> updateUser(@PathVariable int id,@RequestBody User user){
+@DeleteMapping("/removeUser/{id}")
+    public Response<List<AccountResponse>> removeUser(@PathVariable("id") int id){
         try {
-            if (isUserValid(id)){
-                user.setUserId(id);
-                userService.updateUser(user,id);
-                return Response.<User>updateSuccess().setPayload(user).setMessage("Successfully updated by Id " +id);
+            int deleteUser = userService.removeUser(id);
+            if (deleteUser>0){
+                return Response.<List<AccountResponse>>deleteSuccess().setMessage("Successfully Delete account by Id !!!");
             }else {
-                return userNotFound(id);
+                return Response.<List<AccountResponse>>notFound().setMessage("Undefined the Id to delete!!!!");
             }
         }catch (Exception e){
-            return Response.<User>exception().setSuccess(false).setMessage("Cannot defined Id to Update!!" +id);
+            System.out.println(e.getMessage());
+          return Response.<List<AccountResponse>>exception().setMessage("Failed to remove the user !!!!");
         }
-    }
-
-    @DeleteMapping("/delete/{id}")
-    public Response<User> deleteUser(@PathVariable int id){
+}
+@PutMapping("/updateUser/{id}")
+    public Response<List<User>> updateUser(@RequestBody User user, @PathVariable("id")int id){
         try {
-            if(isUserValid(id)){
-                userService.removeUser(id);
-                return Response.<User>deleteSuccess().setMessage("Successfully deleted by Id "+id);
-            }
-            else {
-                return userNotFound(id);
-            }
-        } catch (Exception exception){
-            return Response.<User>exception().setMessage("Cannot  defined Id to delete!!! "+ id).setSuccess(false);
+int updateUser = userService.updateUser(user, id);
+if (updateUser>0){
+    return Response.<List<User>>ok().setMessage("Successfully Update account by Id!!!");
+}else {
+    return Response.<List<User>>notFound().setMessage("Undefined the id to update!!!");
+}
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            return Response.<List<User>>notFound().setMessage("Failed to Update the user !!!!");
         }
-    }
+}
 }

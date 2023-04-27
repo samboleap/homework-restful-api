@@ -1,6 +1,7 @@
 package com.istad.data_analytics_restful_api.utils;
 
 import com.istad.data_analytics_restful_api.model.response.AccountResponse;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
@@ -9,6 +10,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Accessors(chain = true)
 //use <T> to create the generic for using every method of class without write or correct again and again
 public class Response<T> {

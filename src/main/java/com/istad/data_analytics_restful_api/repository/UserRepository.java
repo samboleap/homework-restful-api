@@ -26,12 +26,14 @@ public interface UserRepository {
     @Select("select * from users_tb where id = #{id}")
     User findUserByID(int id);
 
-    @Delete("delete users_tb where id =#{id}")
-    @Result(column = "id", property = "userId")
+
+
+    @Delete("DELETE FROM users_tb WHERE userId =#{id}")
     int removeUser(int id);
 
     List<User> findUserByUsername();
 
+    @Result(column = "id", property = "userId")
     @Update("UPDATE users_tb SET username=#{user.username}, gender=#{user.gender}, address=#{user.address} where id =#{user.id} returning#{id}")
     int updateUser(@PathVariable("user") User user,int id);
 
