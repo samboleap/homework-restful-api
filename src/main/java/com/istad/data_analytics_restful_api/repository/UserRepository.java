@@ -32,8 +32,8 @@ public interface UserRepository {
 
     List<User> findUserByUsername();
 
-    @Update("")
-    int updateUser(@PathVariable("users") User user,int id);
+    @Update("UPDATE users_tb SET username=#{user.username}, gender=#{user.gender}, address=#{user.address} where id =#{user.id} returning#{id}")
+    int updateUser(@PathVariable("user") User user,int id);
 
     @Results({
             @Result(column = "id", property = "userId"),
